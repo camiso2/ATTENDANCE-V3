@@ -9,6 +9,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 use App\Custom\StatusController;
+use App\Custom\ValidatorAppController;
 use OpenApi\Annotations as OA;
 
 use Illuminate\Support\Facades\Log;
@@ -42,37 +43,16 @@ class AuthController extends Controller
      *     @OA\Response(response="401", description="Invalid credentials")
      * )
      */
-    public function login(Request $request):Array
+    public function login(Request $request):JsonResponse
     {
         try {
-            $credentials = $request->only("email", "password");
-            $validator = Validator::make($credentials, [
-                'email' => 'required',
-                'password' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return StatusController::successfullMessage(422, 'Login validation error', false, 0, ['error' => $validator->errors()]);
-            }
-            if (!$token = JWTAuth::attempt([
-                'email' => $request->email,
-                'password' => $request->password,
-            ])
-            ) {
-                return StatusController::successfullMessage(401, 'User not authorized', false, 0, ['error' => 'Unauthorized']);
-            }
 
-            $data = [
-                'access_token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => JWTAuth::factory()->getTTL() * 60,
-            ];
-            return StatusController::successfullMessage(201, 'Successfully created token', true, 0, $data);
+            return response()->json(User::setLogin($request));
 
         } catch (JWTException $e) {
-            /*Log::info("Error login user ::  could_not_create_token/" . $e->getMessage());
-            return response()->json(['error' => 'could_not_create_token'], 500);*/
+
             Log::info("Error exception login :: could_not_create_token./" . $e->getMessage());
-            return StatusController::eMessageError([$e->getMessage()], 'Error exception login.');
+            return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error exception login.'));
 
         }
     }
@@ -124,25 +104,16 @@ class AuthController extends Controller
      */
     public function register(Request $request):JsonResponse
     {
+
         try {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|between:2,100',
-                'email' => 'required|email|unique:users|max:50',
-                'password' => 'required|confirmed|string|min:6',
-                'institution' => 'required|string|min:1',
-            ]);
-            if ($validator->fails()) {
-                return response()->json(StatusController::successfullMessage(422, 'Register validation error', false, 0, ['error' => $validator->errors()]));
-            }
-            $account = User::create(array_merge($validator->validated(), ['password' => bcrypt($request->password)]));
-            if($account){
-                return response()->json(StatusController::successfullMessage(201, 'Register successfull', true, 0, $account));
-            }
-            return response()->json(StatusController::notFoundMessage());
+
+            return response()->json(User::setRegister($request));
 
         } catch (\Exception $e) {
+
             Log::info("Error exception register./" . $e->getMessage());
             return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error exception register.'));
+
         }
     }
 
@@ -160,6 +131,7 @@ class AuthController extends Controller
     public function logout():JsonResponse
     {
         try {
+
             JWTAuth::invalidate();
             return  response()->json(StatusController::successfullMessage(201, 'Logout successfull', true, 0, ['message' => 'Successfully logged out',]));
 
