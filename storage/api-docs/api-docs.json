@@ -143,13 +143,13 @@
                 ]
             }
         },
-        "/api/auth/user": {
+        "/api/auth/userSession": {
             "get": {
                 "tags": [
                     "Usuarios"
                 ],
                 "summary": "Get logged-in user details",
-                "operationId": "e23e5f9b32cba7953a224624a2a16544",
+                "operationId": "63a650b5c8ce4891a627fc8f5557c4f9",
                 "responses": {
                     "200": {
                         "description": "Success"

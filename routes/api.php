@@ -43,7 +43,7 @@ Route::group([
          /*users controller*/
          Route::Post('logout', 'AuthController@logout');
          Route::get('refresh', 'AuthController@refresh');
-         Route::get('user', 'AuthController@user');
+         Route::get('userSession', 'AuthController@userSession');
 
          /*institutions controller*/
          Route::get('listAllInstutions', 'InstitutionController@listAllInstutions')->name('listAllInstutions');

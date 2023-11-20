@@ -2,23 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\JsonResponse;
 use App\Custom\StatusController;
-use App\Custom\ValidatorAppController;
-use OpenApi\Annotations as OA;
-
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
+use OpenApi\Annotations as OA;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
-
-
 
     /**
      * @OA\Post(
@@ -43,7 +36,7 @@ class AuthController extends Controller
      *     @OA\Response(response="401", description="Invalid credentials")
      * )
      */
-    public function login(Request $request):JsonResponse
+    public function login(Request $request): JsonResponse
     {
         try {
 
@@ -51,12 +44,16 @@ class AuthController extends Controller
 
         } catch (JWTException $e) {
 
+            Log::info("Error JWTException login :: could_not_create_token./" . $e->getMessage());
+            return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error JWTException login.'));
+
+        } catch (\Exception $e) {
+
             Log::info("Error exception login :: could_not_create_token./" . $e->getMessage());
             return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error exception login.'));
 
         }
     }
-
 
     /**
      * @OA\Post(
@@ -102,7 +99,7 @@ class AuthController extends Controller
      *     @OA\Response(response="422", description="Validation errors")
      * )
      */
-    public function register(Request $request):JsonResponse
+    public function register(Request $request): JsonResponse
     {
 
         try {
@@ -114,11 +111,15 @@ class AuthController extends Controller
             Log::info("Error exception register./" . $e->getMessage());
             return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error exception register.'));
 
+        } catch (JWTException $e) {
+
+            Log::info("Error JWTException register :: not found register./" . $e->getMessage());
+            return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error JWTException register.'));
+
         }
     }
 
-
-     /**
+    /**
      * @OA\post(
      *     path="/api/auth/logout",
      *     tags={"Usuarios"},
@@ -128,16 +129,19 @@ class AuthController extends Controller
      * )
      */
 
-    public function logout():JsonResponse
+    public function logout(): JsonResponse
     {
         try {
-
-            JWTAuth::invalidate();
-            return  response()->json(StatusController::successfullMessage(201, 'Logout successfull', true, 0, ['message' => 'Successfully logged out',]));
+            return response()->json(User::selLogout());
 
         } catch (\Exception $e) {
             Log::info("Error exception logout./" . $e->getMessage());
             return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error exception logout.'));
+        } catch (JWTException $e) {
+
+            Log::info("Error JWTException logout :: not found logout./" . $e->getMessage());
+            return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error JWTException logout.'));
+
         }
 
     }
@@ -152,44 +156,50 @@ class AuthController extends Controller
      * )
      */
 
-    public function refresh():JsonResponse
+    public function refresh(): JsonResponse
     {
 
-        try{
-            $data =  [
-                'access_token' => JWTAuth::refresh(),
-                'token_type' => 'bearer',
-                'expires_in' => JWTAuth::factory()->getTTL() * 60,
-            ];
-            return response()->json(StatusController::successfullMessage(201, 'Refresh successfull', true, count($data), $data));
+        try {
 
-        }catch (\Exception $e) {
-            Log::info('Error exception refresh./'. $e->getMessage());
+            return response()->json(User::setRefresh());
+
+        } catch (\Exception $e) {
+            Log::info('Error exception refresh./' . $e->getMessage());
             return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error exception refresh.'));
+        } catch (JWTException $e) {
+
+            Log::info("Error JWTException refresh :: not found refresh./" . $e->getMessage());
+            return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error JWTException refresh.'));
+
         }
 
     }
 
     /**
      * @OA\Get(
-     *     path="/api/auth/user",
+     *     path="/api/auth/userSession",
      *     tags={"Usuarios"},
      *     summary="Get logged-in user details",
      *     @OA\Response(response="200", description="Success"),
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function user():JsonResponse
+    public function userSession(): JsonResponse
     {
-        try{
-            return response()->json(StatusController::successfullMessage(201, 'Data user sesion', true, 0, JWTAuth::user()));
-        }catch (\Exception $e) {
-            Log::info('Error exception user/'. $e->getMessage());
-            return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error exception user.'));
+        try {
+            return response()->json(User::setUserSession());
+        } catch (\Exception $e) {
+            Log::info('Error exception userSession/' . $e->getMessage());
+            return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error exception userSession.'));
+        } catch (JWTException $e) {
+
+            Log::info("Error JWTException userSession :: not found userSession./" . $e->getMessage());
+            return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error JWTException userSession.'));
+
         }
     }
 
-      /**
+    /**
      * @OA\Get(
      *     path="/api/auth/userAll",
      *     tags={"Usuarios"},
@@ -199,16 +209,21 @@ class AuthController extends Controller
      * )
      */
 
-    public function userAll():JsonResponse
+    public function userAll(): JsonResponse
     {
-        try{
+        try {
             return response()->json(User::setUserAll());
-        }catch (\Exception $e) {
-            Log::info('Error exception user/'. $e->getMessage());
+        } catch (\Exception $e) {
+            Log::info('Error exception userAll/' . $e->getMessage());
             return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error exception userAll.'));
 
+        } catch (JWTException $e) {
+
+            Log::info("Error JWTException userSession :: not found userAll./" . $e->getMessage());
+            return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error JWTException userAll.'));
 
         }
+
     }
 
 }
