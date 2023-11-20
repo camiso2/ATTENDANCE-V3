@@ -39,7 +39,7 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         try {
-
+            echo "test";
             return response()->json(User::setLogin($request));
 
         } catch (JWTException $e) {
