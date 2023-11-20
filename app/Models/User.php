@@ -110,4 +110,24 @@ class User extends Authenticatable implements JWTSubject
         return StatusController::successfullMessage(201, 'Successfully created token', true, count($data), $data);
     }
 
+    /**
+     * all users registereds
+     *
+     * @param mixed $request
+     *
+     * @return array
+     *
+     */
+    public static function setUserAll():array{
+
+        $userAll = User::all();
+
+        if($userAll){
+            return StatusController::successfullMessage(201, 'Successfully all', true,  $userAll->count(), [$userAll]);
+        }
+
+        return StatusController::successfullMessage(102, 'User error', false, 0, ['error' => ['unknown error']]);
+
+    }
+
 }

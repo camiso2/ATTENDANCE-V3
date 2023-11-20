@@ -161,7 +161,7 @@ class AuthController extends Controller
                 'token_type' => 'bearer',
                 'expires_in' => JWTAuth::factory()->getTTL() * 60,
             ];
-            return response()->json(StatusController::successfullMessage(201, 'Refresh successfull', true, 0, $data));
+            return response()->json(StatusController::successfullMessage(201, 'Refresh successfull', true, count($data), $data));
 
         }catch (\Exception $e) {
             Log::info('Error exception refresh./'. $e->getMessage());
@@ -202,7 +202,7 @@ class AuthController extends Controller
     public function userAll():JsonResponse
     {
         try{
-            return response()->json(StatusController::successfullMessage(201, 'All users', true,0,[User::all()]));
+            return response()->json(User::setUserAll());
         }catch (\Exception $e) {
             Log::info('Error exception user/'. $e->getMessage());
             return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error exception userAll.'));
