@@ -5,6 +5,8 @@ Sistema desarrollado
 
 El sistema busca llevar el registro de los estudiantes de una institucòn educativa que faltaron a clase, enviando mensajes por whatsApp, email y sms
 
+## <a href="https://youtu.be/cm8A9e3Otbw" target="_blank">DEMO</a>
+
 
 Utilidades API :: Attendance
 
@@ -24,7 +26,7 @@ Utilidades API :: Attendance
 
 
 Tecnologías Usadas
-* Back-end  : PHP->Laravel 10 Sail, Docker
+* Back-end  : PHP->Laravel 10 Sail, Docker, Swagger
 * Front-end : HTML5, CSS3, Bootstrap 4, Vue3, axios,
 * Metodologìa : TDD
 * tiempo de desarrollo 26 horas
@@ -41,6 +43,6 @@ LIBRERIAS EXTERNAS
 
 Desarrollado
 * Jaiver Andrés Ocampo Oviedo
-* Full Stack
+* Full Stack Developer
 * Contacto : +57 3174885954
 * Actualmente en desarrollo 
