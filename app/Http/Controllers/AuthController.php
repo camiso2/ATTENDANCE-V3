@@ -51,8 +51,6 @@ class AuthController extends Controller
 
         } catch (JWTException $e) {
 
-            echo "test credentials";
-
             Log::info("Error exception login :: could_not_create_token./" . $e->getMessage());
             return response()->json(StatusController::eMessageError([$e->getMessage()], 'Error exception login.'));
 
