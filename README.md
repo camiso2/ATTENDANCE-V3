@@ -27,7 +27,6 @@ Utilidades API :: Attendance
 
 Tecnologías Usadas
 * Back-end  : PHP->Laravel 10 Sail, Docker, Swagger
-* Front-end : HTML5, CSS3, Bootstrap 4, Vue3, axios,
 * Metodologìa : TDD
 * tiempo de desarrollo 26 horas
 
