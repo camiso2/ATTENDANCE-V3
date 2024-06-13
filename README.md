@@ -3,7 +3,7 @@
 
 Sistema desarrollado  
 
-El sistema busca llevar el registro de los estudiantes de una institucòn educativa que faltaron a clase, enviando mensajes por whatsApp, email y sms
+El sistema busca llevar el registro de los estudiantes de una institución educativa que faltaron a clase, enviando mensajes por whatsApp, email y sms
 
 ## <a href="https://youtu.be/cm8A9e3Otbw" target="_blank">DEMO</a>
 
